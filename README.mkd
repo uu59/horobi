@@ -91,6 +91,16 @@ Please see example/ directory.
 
 You can ignore launch sequence to Pub/Sub/Hub nodes.
 
+# Install
+
+Install ZeroMQ first.
+
+[http://www.zeromq.org/intro:get-the-software](http://www.zeromq.org/intro:get-the-software)
+
+And install gem
+
+    $ sudo gem install zmq horobi
+
 # Contributing to horobi
  
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
