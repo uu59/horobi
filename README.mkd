@@ -2,19 +2,19 @@
 
 Horobi is very flexible mesh network builder with ZeroMQ.
 
-![zmq model](./horobi-zmq.png) 
+![zmq model](http://uu59.github.com/horobi/horobi-zmq.png) 
 
 Virtual realtime web.
 
-![sample1](./horobi-sample.png) 
+![sample1](http://uu59.github.com/horobi/horobi-sample.png) 
 
 Scalable logging architecture.
 
-![sample2](./horobi-sample2.png) 
+![sample2](http://uu59.github.com/horobi/horobi-sample2.png) 
 
 Or, you can do all on one machine.
 
-![sample3](./horobi-sample3.png) 
+![sample3](http://uu59.github.com/horobi/horobi-sample3.png) 
 
 # Node Type
 
