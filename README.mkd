@@ -1,0 +1,108 @@
+# horobi
+
+Horobi is very flexible mesh network builder with ZeroMQ.
+
+![zmq model](./horobi-zmq.png) 
+
+Virtual realtime web.
+
+![sample1](./horobi-sample.png) 
+
+Scalable logging architecture.
+
+![sample2](./horobi-sample2.png) 
+
+Or, you can do all on one machine.
+
+![sample3](./horobi-sample3.png) 
+
+# Node Type
+
+
+## Pub
+
+Pub-node push some interesting data to Hub-node.
+
+    #!/usr/bin/env ruby
+    require "rubygems"
+    require "horobi"
+
+    loop do
+      Horobi::Pub.send(Time.now.to_s)
+      sleep 1
+    end
+
+Real world sample as below:
+
+    #!/usr/bin/env ruby
+    require "rubygems"
+    require "twitter/json_stream" # https://github.com/voloko/twitter-stream
+    require "horobi"
+
+    EM.run do
+      stream = Twitter::JSONStream.connect(
+        :path    => '/1/statuses/filter.json?track=ruby',
+        :auth    => 'LOGIN:PASSWORD'
+      )
+
+      stream.each_item do |json|
+        Horobi::Pub.send("twitter " + json)
+      end
+    end
+
+## Hub
+
+Hub-node get data from Pub-node, and push to Sub-node.
+
+    #!/usr/bin/env ruby
+    require "rubygems"
+    require "horobi"
+
+    Horobi::Hub.start
+
+## Sub
+
+Sub-node get data from Hub-node and do some stuff.
+
+    #!/usr/bin/env ruby
+    require "rubygems"
+    require "notify" # https://github.com/jugyo/notify
+    require "json"
+    require "horobi"
+
+    Horobi::Sub.listen("twitter") do |data|
+      tweet = JSON.parse(data)
+      Notify.notify(tweet["user"]["screen_name"], tweet["text"])
+    end
+
+# Example
+
+Please see example/ directory.
+
+    # launch pub node with background job, stream push to tcp://127.0.0.1:5551. if you don't want to log messages, use -l /dev/null option
+    $ SCREEN_NAME=uu59 PASSWORD=xxxx ruby example/twitter/pub1.rb -o tcp://127.0.0.1:5551 ruby & # tracking twitter stream with "ruby"
+    $ ruby example/twitter/pub2.rb -o tcp://127.0.0.1:5551 & # fake stream
+
+    # launch hub node as daemon(-d), ZeroMQ PULL socket listen to tcp://127.0.0.1:5551 (-i 5551) and PUB socket is tcp://127.0.0.1:5552 (-o 5552)
+    $ ruby example/twitter/hub.rb -d -i 5551 -o 5552
+
+    # get data from tcp://127.0.0.1:5552. you'll get mixed stream of twitter and fake.
+    $ ruby example/twitter/sub1.rb -i tcp://127.0.0.1:5552
+
+You can ignore launch sequence to Pub/Sub/Hub nodes.
+
+# Contributing to horobi
+ 
+* Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
+* Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it
+* Fork the project
+* Start a feature/bugfix branch
+* Commit and push until you are happy with your contribution
+* Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
+* Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
+
+# Copyright
+
+Copyright (c) 2011 uu59. See LICENSE.txt for
+further details.
+
