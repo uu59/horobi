@@ -16,19 +16,15 @@ module Horobi
         op.on('-l VAL','--logfile=VAL','logfile path'){|v| @options["logfile"] = (v == "-" ? STDOUT : v)}
         op.on('-i VAL','--input-port=VAL','input(pull) point such as 5551'){|v| @options["input"] = v}
         op.on('-o VAL','--output-port=VAL','output(pub) point such as 5552'){|v| @options["output"] = v}
-        #op.on('-d','--daemonize','daemonize this script'){ @options["daemonize"] = true }
+        op.on('-d','--daemonize','daemonize this script'){ @options["daemonize"] = true }
         op.parse!(ARGV)
       end
 
       @logger = Logger.new(@options["logfile"])
       
       if @options["daemonize"]
-        # unsupported yet
-        # if process fork, zmq sockets are hangup maybe caused by these case:
-        # - http://lists.zeromq.org/pipermail/zeromq-dev/2010-July/004706.html
-        # - http://zguide.zeromq.org/page:all#Making-a-Clean-Exit
-        #Horobi.daemonize
-        #@logger.debug("mainloop running ##{Process.pid}")
+        Horobi.daemonize
+        @logger.debug("mainloop running ##{Process.pid}")
       end
 
       if @options["pidfile"]
@@ -45,7 +41,7 @@ module Horobi
         @logger.info("output socket listen at #{@options["output"]}")
       rescue TypeError => ex
         puts "invalid port. input:#{@options["input"]}, output:#{@options["output"]}"
-        exit!(0)
+        exit!
       end
 
       Horobi.close_hooks do
@@ -60,7 +56,7 @@ module Horobi
         @logger.debug(inp)
       end
 
-      exit!(0)
+      exit!
     end
 
     def stop
@@ -76,7 +72,6 @@ module Horobi
         end
         @context.close
       end
-      exit!(0)
     end
 
     extend self

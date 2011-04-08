@@ -2,10 +2,10 @@
 
 module Horobi
   module Pub
-    @context ||= ZMQ::Context.new
     attr_reader :sock
 
     def self.init
+      @context ||= ZMQ::Context.new
       options = {
         "logfile" => STDERR,
         "outputs" => [],
@@ -15,7 +15,7 @@ module Horobi
         op.on('-l VAL','--logfile=VAL','logfile path'){|v| options["logfile"] = (v == "-" ? STDOUT : v)}
         op.on('-o VAL','--ouput-points=VAL',
           "output(hub's input) point(s) such as 'tcp://127.0.0.1:5551,tcp://127.0.11.1:5551'"){|v| options["outputs"] = v.split(",")}
-        #op.on('-d','--daemonize','daemonize this script'){ options["daemon"] = true }
+        op.on('-d','--daemonize','daemonize this script'){ options["daemon"] = true }
         op.parse!(ARGV)
       end
       @options = options

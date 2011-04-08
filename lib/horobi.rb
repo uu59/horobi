@@ -13,13 +13,13 @@ module Horobi
   @closes = []
 
   def daemonize
-    exit!(0) if fork
+    exit! if fork
     Process.setsid
-    exit!(0) if fork
+    exit! if fork
 
     STDIN.reopen('/dev/null', 'r+')
-    #STDOUT.reopen('/dev/null', 'a')
-    #STDERR.reopen('/dev/null', 'a')
+    STDOUT.reopen('/dev/null', 'a')
+    STDERR.reopen('/dev/null', 'a')
   end
 
   def close_hooks(&block)
@@ -29,8 +29,13 @@ module Horobi
   %w!INT TERM!.each{|sig|
     Signal.trap(sig) do
       @closes.each{|destruct|
-        destruct.call
+        begin
+          destruct.call
+        ensure
+          next
+        end
       }
+      exit!
     end
   }
 
