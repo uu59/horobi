@@ -34,10 +34,10 @@ module Horobi
       begin
         @context = ZMQ::Context.new
         @input  = @context.socket(ZMQ::PULL)
-        @input.bind("tcp://127.0.0.1:#{@options["input"]}")
+        @input.bind("tcp://0.0.0.0:#{@options["input"]}")
         @logger.info("input socket listen at #{@options["input"]}")
         @output = @context.socket(ZMQ::PUB)
-        @output.bind("tcp://127.0.0.1:#{@options["output"]}")
+        @output.bind("tcp://0.0.0.0:#{@options["output"]}")
         @logger.info("output socket listen at #{@options["output"]}")
       rescue TypeError => ex
         puts "invalid port. input:#{@options["input"]}, output:#{@options["output"]}"
